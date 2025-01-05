@@ -25,105 +25,107 @@ class PortScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: const Color(0xFF5b2892),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.06), // Adjust padding
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Logo/Image Section
-            Image.asset(
-              "assets/images/MyPort.png",
-              width: screenWidth * 0.3, // Adjust image width
-              height: screenWidth * 0.3, // Adjust image height
-            ),
-            SizedBox(height: screenHeight * 0.05), // Adjust spacing
-
-            // Port Number Input Section
-            TextField(
-              controller: portController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Enter Frame",
-                labelStyle: TextStyle(
-                  color: const Color(0xFF5b2892),
-                  fontSize: screenWidth * 0.04, // Adjust font size
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Color(0xFF5b2892),
-                    width: 2,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.06), // Adjust padding
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Logo/Image Section
+              Image.asset(
+                "assets/images/MyPort.png",
+                width: screenWidth * 0.3, // Adjust image width
+                height: screenWidth * 0.3, // Adjust image height
+              ),
+              SizedBox(height: screenHeight * 0.05), // Adjust spacing
+        
+              // Port Number Input Section
+              TextField(
+                controller: portController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Enter Frame",
+                  labelStyle: TextStyle(
+                    color: const Color(0xFF5b2892),
+                    fontSize: screenWidth * 0.04, // Adjust font size
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF5b2892),
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF5b2892),
+                      width: 2,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: screenHeight * 0.02, // Adjust vertical padding
+                    horizontal: screenWidth * 0.03, // Adjust horizontal padding
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Color(0xFF5b2892),
-                    width: 2,
+              ),
+              SizedBox(height: screenHeight * 0.03), // Adjust spacing
+        
+              // Calculate Button
+              ElevatedButton(
+                onPressed: () {
+                  final port = int.tryParse(portController.text) ?? 0;
+                  context.read<PortCubit>().calculatePort(port);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.2, // Adjust horizontal padding
+                    vertical: screenHeight * 0.02, // Adjust vertical padding
+                  ),
+                  backgroundColor: const Color(0xFF5b2892),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  shadowColor: Colors.purpleAccent,
+                  elevation: 5,
+                ),
+                child: Text(
+                  "Calculate",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045, // Adjust font size
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: screenHeight * 0.02, // Adjust vertical padding
-                  horizontal: screenWidth * 0.03, // Adjust horizontal padding
-                ),
               ),
-            ),
-            SizedBox(height: screenHeight * 0.03), // Adjust spacing
-
-            // Calculate Button
-            ElevatedButton(
-              onPressed: () {
-                final port = int.tryParse(portController.text) ?? 0;
-                context.read<PortCubit>().calculatePort(port);
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.2, // Adjust horizontal padding
-                  vertical: screenHeight * 0.02, // Adjust vertical padding
-                ),
-                backgroundColor: const Color(0xFF5b2892),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                shadowColor: Colors.purpleAccent,
-                elevation: 5,
+              SizedBox(height: screenHeight * 0.05), // Adjust spacing
+        
+              // Result Display Section
+              BlocConsumer<PortCubit, PortState>(
+                listener: (context, state) {},
+                builder: (context, state) {
+                  if (state is PortInitial) {
+                    return const Text(
+                      "Enter a port number to calculate",
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    );
+                  } else if (state is PortInvalid) {
+                    return const Text(
+                      "Invalid Port Number",
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    );
+                  } else if (state is PortCalculated) {
+                    return ResultCard(state: state, screenWidth: screenWidth);
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
-              child: Text(
-                "Calculate",
-                style: TextStyle(
-                  fontSize: screenWidth * 0.045, // Adjust font size
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.05), // Adjust spacing
-
-            // Result Display Section
-            BlocConsumer<PortCubit, PortState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                if (state is PortInitial) {
-                  return const Text(
-                    "Enter a port number to calculate",
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  );
-                } else if (state is PortInvalid) {
-                  return const Text(
-                    "Invalid Port Number",
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                  );
-                } else if (state is PortCalculated) {
-                  return ResultCard(state: state, screenWidth: screenWidth);
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-
-            // Button to navigate to Details Screen
-            SizedBox(height: screenHeight * 0.02), // Adjust spacing
-           
-          ],
+        
+              // Button to navigate to Details Screen
+              SizedBox(height: screenHeight * 0.02), // Adjust spacing
+             
+            ],
+          ),
         ),
       ),
     );
